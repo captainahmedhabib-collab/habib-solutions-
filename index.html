@@ -1,0 +1,52 @@
+import os
+
+# كود الـ HTML الذي سيقوم بعمل إطار (iframe) مخفي لموقعك
+html_content = """<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Ahmed Habib Workspace</title>
+    <style>
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: #0f172a; 
+        }
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            display: block; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- عرض مشروعك من Whacka بسلاسة داخل الشاشة بالكامل -->
+    <iframe src="https://habib-digital-0bzk.whacka.app" allowfullscreen></iframe>
+
+</body>
+</html>
+"""
+
+# تحديد مسار الحفظ (في مساحة التخزين الداخلية أو مجلد التطبيق الافتراضي)
+file_name = "index.html"
+
+try:
+    with open(file_name, "w", encoding="utf-8") as file:
+        file.write(html_content)
+    
+    current_path = os.path.abspath(file_name)
+    print("--------------------------------------------------")
+    print("✅ تم إنشاء ملف الـ HTML بنجاح!")
+    print(f"📁 مسار الملف على هاتفك: {current_path}")
+    print("--------------------------------------------------")
+    print("الخطوة التالية: ارفع هذا الملف إلى GitHub ثم اربطه بـ Vercel كما اتفقنا.")
+    
+except Exception as e:
+    print(f"❌ حدث خطأ أثناء الحفظ: {e}")
