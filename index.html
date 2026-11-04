@@ -1,52 +1,76 @@
-import os
-
-# كود الـ HTML الذي سيقوم بعمل إطار (iframe) مخفي لموقعك
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captain Ahmed Habib Workspace</title>
-    <style>
-        * { box-sizing: border-box; }
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: #0f172a; 
-        }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            display: block; 
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07894d" />
+  <meta name="description" content="Touch Clinics - عياداتك أقرب إليك" />
+  <title>Touch Clinics | عياداتك أقرب إليك</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+    :root { --green:#07894d; --green-dark:#066b3e; --mint:#eaf8f0; --ink:#10281d; --muted:#6c7f75; --line:#e6eee9; --gold:#f3bc42; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: 'Cairo', Arial, sans-serif; background:#f8fbf9; color:var(--ink); }
+    a { color:inherit; text-decoration:none; }
+    .shell { min-height:100vh; }
+    .nav { height:76px; padding:0 7%; display:flex; align-items:center; justify-content:space-between; background:white; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; color:var(--green-dark); }
+    .logo { width:42px; height:42px; border-radius:14px; background:var(--green); color:#fff; display:grid; place-items:center; font-size:24px; box-shadow:0 8px 18px #07894d2b; }
+    .nav-links { display:flex; gap:28px; color:#63766d; font-size:14px; }
+    .nav-links a:first-child { color:var(--green); font-weight:bold; }
+    .nav-actions { display:flex; align-items:center; gap:12px; }
+    .login { color:var(--green-dark); font-weight:bold; font-size:14px; }
+    .btn { border:0; border-radius:12px; padding:13px 22px; background:var(--green); color:white; font-weight:bold; cursor:pointer; font-family:inherit; box-shadow:0 8px 18px #07894d24; }
+    .btn:hover { background:var(--green-dark); }
+    .hero { padding:72px 7% 56px; display:grid; grid-template-columns:1.08fr .92fr; gap:60px; align-items:center; background:linear-gradient(135deg,#f8fffb 0%,#eaf8f0 100%); }
+    .eyebrow { display:inline-flex; gap:8px; align-items:center; color:var(--green); background:#d9f3e4; padding:8px 13px; border-radius:30px; font-size:13px; font-weight:bold; }
+    h1 { font-size:clamp(34px,4.5vw,62px); line-height:1.16; margin:20px 0 18px; letter-spacing:-1.5px; }
+    h1 span { color:var(--green); }
+    .lead { color:var(--muted); font-size:18px; line-height:1.9; max-width:550px; margin:0 0 30px; }
+    .hero-buttons { display:flex; gap:12px; align-items:center; }
+    .outline { background:white; color:var(--green-dark); border:1px solid #bfe2cc; box-shadow:none; }
+    .visual { position:relative; min-height:360px; display:grid; place-items:center; }
+    .circle { width:330px; height:330px; border-radius:50%; background:#ccefd9; position:absolute; }
+    .card { position:relative; width:min(330px,90%); background:white; border-radius:24px; padding:26px; box-shadow:0 22px 50px #235f3c1c; border:1px solid #fff; }
+    .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+    .card-title { font-size:14px; font-weight:bold; }
+    .avatar { width:44px; height:44px; background:#dff5e7; border-radius:50%; display:grid; place-items:center; font-size:22px; }
+    .doctor { display:flex; gap:12px; align-items:center; border:1px solid var(--line); padding:13px; border-radius:15px; margin-bottom:12px; }
+    .doctor strong { display:block; font-size:14px; margin-bottom:6px; }
+    .doctor small { color:var(--muted); font-size:11px; }
+    .status { margin-right:auto; color:var(--green); font-size:11px; background:#e9f8ee; padding:5px 8px; border-radius:8px; }
+    .section { padding:72px 7%; background:white; }
+    .section-heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:28px; }
+    h2 { margin:0 0 8px; font-size:30px; } .section-heading p { margin:0; color:var(--muted); }
+    .link { color:var(--green); font-weight:bold; font-size:14px; }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .feature { border:1px solid var(--line); border-radius:18px; padding:25px; background:#fbfdfc; transition:.2s; }
+    .feature:hover { transform:translateY(-4px); box-shadow:0 15px 35px #194b2b10; }
+    .icon { width:48px; height:48px; display:grid; place-items:center; background:var(--mint); border-radius:14px; font-size:24px; margin-bottom:18px; }
+    .feature h3 { margin:0 0 10px; font-size:17px; } .feature p { color:var(--muted); line-height:1.8; font-size:14px; margin:0; }
+    .cta { margin:0 7% 70px; padding:42px 50px; border-radius:24px; background:var(--green-dark); color:white; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .cta h2 { font-size:27px; } .cta p { color:#cce8d8; margin:8px 0 0; }
+    .cta .btn { background:white; color:var(--green-dark); box-shadow:none; white-space:nowrap; }
+    footer { padding:25px 7%; color:var(--muted); font-size:12px; display:flex; justify-content:space-between; border-top:1px solid var(--line); background:#fbfdfc; }
+    @media(max-width:800px) { .nav { padding:0 5%; } .nav-links { display:none; } .hero { grid-template-columns:1fr; padding:52px 5% 40px; gap:18px; } .visual { min-height:300px; } .circle { width:270px; height:270px; } .section { padding:52px 5%; } .features { grid-template-columns:1fr; } .section-heading { display:block; } .section-heading .link { display:inline-block; margin-top:18px; } .cta { margin:0 5% 45px; padding:30px 25px; display:block; } .cta .btn { margin-top:22px; } footer { padding:22px 5%; gap:12px; flex-direction:column; } }
+  </style>
 </head>
 <body>
-
-    <!-- عرض مشروعك من Whacka بسلاسة داخل الشاشة بالكامل -->
-    <iframe src="https://habib-digital-0bzk.whacka.app" allowfullscreen></iframe>
-
+  <div class="shell">
+    <header class="nav">
+      <a class="brand" href="#"><span class="logo">✚</span><span>Touch Clinics</span></a>
+      <nav class="nav-links" aria-label="التنقل الرئيسي"><a href="#home">الرئيسية</a><a href="#services">خدماتنا</a><a href="#about">عن Touch Clinics</a><a href="#contact">تواصل معنا</a></nav>
+      <div class="nav-actions"><a class="login" href="#login">تسجيل الدخول</a><button class="btn" onclick="document.querySelector('#booking').scrollIntoView({behavior:'smooth'})">احجز موعداً</button></div>
+    </header>
+    <main>
+      <section class="hero" id="home">
+        <div><span class="eyebrow">● رعايتك الصحية تبدأ من هنا</span><h1>صحتك تستحق<br /><span>لمسة اهتمام.</span></h1><p class="lead">نقرّب لك أفضل الأطباء والخدمات الطبية في تجربة بسيطة، آمنة ومصممة حول احتياجاتك.</p><div class="hero-buttons"><button class="btn" onclick="document.querySelector('#booking').scrollIntoView({behavior:'smooth'})">اكتشف عياداتنا</button><button class="btn outline" onclick="alert('سيتواصل معك فريق Touch Clinics قريباً')">تحدث مع مستشار</button></div></div>
+        <div class="visual" aria-label="واجهة حجز موعد تجريبية"><div class="circle"></div><div class="card"><div class="card-head"><div><div class="card-title">مواعيدك القادمة</div><small style="color:#8b9b93">الثلاثاء، 14 مايو</small></div><div class="avatar">♧</div></div><div class="doctor"><div class="avatar">👩🏻‍⚕️</div><div><strong>د. سارة أحمد</strong><small>طب الأسرة</small></div><span class="status">مؤكد</span></div><div class="doctor"><div class="avatar">👨🏻‍⚕️</div><div><strong>د. محمد علي</strong><small>طب الأسنان</small></div><span class="status">10:30 ص</span></div></div></div>
+      </section>
+      <section class="section" id="services"><div class="section-heading"><div><h2>كل ما تحتاجه لصحتك</h2><p>خدمات طبية موثوقة، في متناول يدك.</p></div><a class="link" href="#booking">عرض جميع الخدمات ←</a></div><div class="features"><article class="feature"><div class="icon">🩺</div><h3>استشارات متخصصة</h3><p>تواصل مع نخبة من الأطباء المعتمدين واحصل على التوجيه المناسب لحالتك.</p></article><article class="feature"><div class="icon">📅</div><h3>حجز سهل وسريع</h3><p>اختر الطبيب والموعد المناسب لك، وأدر جميع مواعيدك من مكان واحد.</p></article><article class="feature"><div class="icon">♥</div><h3>رعاية مستمرة</h3><p>نرافقك في رحلتك الصحية بخطة متابعة واضحة واهتمام لا يتوقف.</p></article></div></section>
+      <section class="cta" id="booking"><div><h2>جاهز تبدأ رحلة عناية أفضل؟</h2><p>احجز موعدك الأول الآن ودعنا نهتم بالباقي.</p></div><button class="btn" onclick="alert('شكراً لاهتمامك! ستتوفر الحجوزات قريباً.')">ابدأ الحجز الآن</button></section>
+    </main>
+    <footer id="contact"><span>© 2024 Touch Clinics. جميع الحقوق محفوظة.</span><span>نحن هنا لصحتك، كل يوم.</span></footer>
+  </div>
 </body>
 </html>
-"""
-
-# تحديد مسار الحفظ (في مساحة التخزين الداخلية أو مجلد التطبيق الافتراضي)
-file_name = "index.html"
-
-try:
-    with open(file_name, "w", encoding="utf-8") as file:
-        file.write(html_content)
-    
-    current_path = os.path.abspath(file_name)
-    print("--------------------------------------------------")
-    print("✅ تم إنشاء ملف الـ HTML بنجاح!")
-    print(f"📁 مسار الملف على هاتفك: {current_path}")
-    print("--------------------------------------------------")
-    print("الخطوة التالية: ارفع هذا الملف إلى GitHub ثم اربطه بـ Vercel كما اتفقنا.")
-    
-except Exception as e:
-    print(f"❌ حدث خطأ أثناء الحفظ: {e}")
