@@ -1,52 +1,341 @@
-import os
-
-# كود الـ HTML الذي سيقوم بعمل إطار (iframe) مخفي لموقعك
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captain Ahmed Habib Workspace</title>
-    <style>
-        * { box-sizing: border-box; }
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: #0f172a; 
-        }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            display: block; 
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HABIB CLINIC GROWTH SYSTEM — نظام نمو العيادات</title>
+  <meta name="description" content="نظام نمو العيادات في مصر: مواعيد، استرداد الغياب، باقات الجلسات، مكتب واتساب مملوك للعيادة، ومركز قيادة للمالك." />
+  <style>
+    :root {
+      --navy: #0A1931;
+      --navy2: #12243F;
+      --gold: #C6A15B;
+      --gold-ink: #1A1408;
+      --paper: #F6F7F9;
+      --muted: rgba(246,247,249,.78);
+      --line: #243652;
+      --ok: #3DBE8A;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+      background: var(--navy);
+      color: var(--paper);
+      line-height: 1.65;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 1rem 5rem; }
+    header {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(10,25,49,.95);
+      border-bottom: 1px solid rgba(198,161,91,.2);
+      backdrop-filter: blur(10px);
+    }
+    .head {
+      max-width: 980px; margin: 0 auto;
+      padding: .85rem 1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    }
+    .brand { color: var(--gold); font-weight: 800; letter-spacing: .02em; font-size: .95rem; }
+    nav { display: flex; flex-wrap: wrap; gap: .55rem; }
+    nav a, .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 42px; border-radius: .7rem; padding: .55rem .95rem;
+      font-weight: 700; font-size: .88rem; border: 0; cursor: pointer; font: inherit;
+    }
+    nav a { color: var(--muted); }
+    .btn-gold { background: var(--gold); color: var(--gold-ink); }
+    .btn-line { background: transparent; border: 1px solid rgba(198,161,91,.45); color: var(--gold); }
+    .hero { padding: 2.2rem 0 1.2rem; }
+    h1 { font-size: clamp(1.7rem, 5.5vw, 2.55rem); line-height: 1.22; margin-bottom: .8rem; }
+    h1 span { color: var(--gold); }
+    .lead { color: var(--muted); max-width: 42rem; margin-bottom: 1.1rem; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1rem; }
+    .badge {
+      font-size: .75rem; font-weight: 700;
+      border: 1px solid rgba(198,161,91,.28);
+      border-radius: 999px; padding: .28rem .65rem; color: var(--gold);
+      background: rgba(198,161,91,.08);
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1rem 0 1.4rem; }
+    .section { margin: 2rem 0; }
+    h2 { font-size: 1.28rem; margin-bottom: .75rem; }
+    h2 span { color: var(--gold); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .85rem; }
+    .card {
+      background: var(--navy2);
+      border: 1px solid rgba(198,161,91,.16);
+      border-radius: 1rem; padding: 1rem;
+    }
+    .card h3 { color: var(--gold); font-size: 1rem; margin-bottom: .35rem; }
+    .card p, .card li { color: var(--muted); font-size: .92rem; }
+    .card ul { padding-inline-start: 1.1rem; margin-top: .4rem; }
+    .diff {
+      border: 1px solid rgba(198,161,91,.35);
+      background: linear-gradient(180deg, rgba(198,161,91,.08), transparent);
+    }
+    .price { font-size: 1.4rem; font-weight: 800; margin: .3rem 0 .55rem; }
+    .price small { font-size: .8rem; color: var(--muted); font-weight: 500; }
+    .muted { color: var(--muted); }
+    .pill {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      border-radius: 999px; padding: .15rem .5rem;
+      background: rgba(198,161,91,.18); color: var(--gold);
+    }
+    .compare { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .compare th, .compare td {
+      border: 1px solid var(--line); padding: .55rem .6rem; text-align: right;
+    }
+    .compare th { background: var(--navy2); color: var(--gold); }
+    .compare td.yes { color: var(--ok); font-weight: 700; }
+    .compare td.no { color: rgba(246,247,249,.45); }
+    footer {
+      margin-top: 2.5rem; padding-top: 1rem;
+      border-top: 1px solid rgba(198,161,91,.15);
+      color: var(--muted); font-size: .85rem;
+    }
+    .cta-box {
+      margin-top: 1.5rem; padding: 1.1rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(198,161,91,.28);
+      background: var(--navy2);
+    }
+    .cta-box h3 { color: var(--gold); margin-bottom: .45rem; }
+  </style>
 </head>
 <body>
+  <header>
+    <div class="head">
+      <div class="brand">HABIB CLINIC GROWTH</div>
+      <nav>
+        <a href="#diff">التميّز</a>
+        <a href="#modules">الوحدات</a>
+        <a href="#pricing">الأسعار</a>
+        <a href="#start">ابدأ</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- عرض مشروعك من Whacka بسلاسة داخل الشاشة بالكامل -->
-    <iframe src="https://habib-digital-0bzk.whacka.app" allowfullscreen></iframe>
+  <main class="wrap">
+    <section class="hero">
+      <div class="badge-row">
+        <span class="badge">مصر أولاً</span>
+        <span class="badge">عربي بالكامل</span>
+        <span class="badge">نمو + تشغيل</span>
+        <span class="badge">فودافون كاش / إنستاباي</span>
+      </div>
+      <h1>ليس برنامج مواعيد.<br><span>نظام نمو للعيادة.</span></h1>
+      <p class="lead">
+        HABIB CLINIC GROWTH SYSTEM يجمع التشغيل اليومي مع استرداد الغياب، باقات الجلسات،
+        مكتب واتساب مملوك للعيادة، ومركز قيادة للمالك — مصمّم لواقع العيادة المصرية والعربية.
+      </p>
+      <div class="actions">
+        <a class="btn btn-gold" href="https://wa.me/201032476258?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%B9%D8%B1%D8%B6%20HABIB%20CLINIC%20GROWTH" target="_blank" rel="noopener">ابدأ عبر واتساب</a>
+        <a class="btn btn-line" href="#modules">شاهد الوحدات</a>
+      </div>
+    </section>
 
+    <section class="section" id="diff">
+      <h2>لماذا <span>مختلف</span> عن الشائع في السوق؟</h2>
+      <p class="muted" style="margin-bottom:.9rem">
+        معظم الأنظمة في مصر والمنطقة تركّز على: مواعيد + ملف مريض + فاتورة + تذكير واتساب.
+        هذا ضروري — لكنه غير كافٍ لنمو الإيراد وتقليل الفاقد.
+      </p>
+      <div class="grid">
+        <div class="card diff">
+          <h3>1) محرك استرداد الغياب</h3>
+          <p>عند عدم حضور مريض، يُعرض الموعد الشاغر تلقائياً على قائمة الانتظار خلال دقائق — لا يبقى الكرسي فارغاً.</p>
+        </div>
+        <div class="card diff">
+          <h3>2) حجز مؤمَّن بالدفع المحلي</h3>
+          <p>تأكيد الموعد عبر عربون فودافون كاش / إنستاباي يقلل الغياب، ويحترم طريقة الدفع الفعلية في مصر.</p>
+        </div>
+        <div class="card diff">
+          <h3>3) مكتب واتساب مملوك للعيادة</h3>
+          <p>قوالب، حالات، وسجل محادثات منظم — بدل فوضى رقم الاستقبال الشخصي وضياع الحجوزات.</p>
+        </div>
+        <div class="card diff">
+          <h3>4) أوضاع تخصص جاهزة</h3>
+          <p>أسنان (باقات جلسات)، جلدية (كورسات)، أطفال (تطعيمات ومتابعات) — ليست شاشة عامة واحدة.</p>
+        </div>
+        <div class="card diff">
+          <h3>5) مركز قيادة المالك</h3>
+          <p>نبضة يومية: حجوزات، حضور، غياب، إيراد متوقع، باقات منتهية — قرارات لا جداول فقط.</p>
+        </div>
+        <div class="card diff">
+          <h3>6) صفحة المريض بهوية العيادة</h3>
+          <p>رابط حجز باسم عيادتك وخدماتك وأسعارك — ليس دليلاً مشتركاً يسرق الانتباه لمنافسين.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>مقارنة سريعة <span>مع الشكل الشائع</span></h2>
+      <div style="overflow-x:auto">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>القدرة</th>
+              <th>أنظمة مواعيد شائعة</th>
+              <th>HABIB CLINIC GROWTH</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>مواعيد + ملف مريض</td>
+              <td class="yes">نعم</td>
+              <td class="yes">نعم</td>
+            </tr>
+            <tr>
+              <td>تذكير واتساب</td>
+              <td class="yes">غالباً</td>
+              <td class="yes">نعم + قوالب جاهزة</td>
+            </tr>
+            <tr>
+              <td>استرداد الموعد الشاغر فوراً</td>
+              <td class="no">نادر</td>
+              <td class="yes">محرك مدمج</td>
+            </tr>
+            <tr>
+              <td>عربون فودافون كاش / إنستاباي</td>
+              <td class="no">محدود</td>
+              <td class="yes">مسار أول</td>
+            </tr>
+            <tr>
+              <td>أوضاع تخصص (أسنان/جلدية/أطفال)</td>
+              <td class="no">عام</td>
+              <td class="yes">قوالب تشغيل</td>
+            </tr>
+            <tr>
+              <td>مركز نمو وإيراد للمالك</td>
+              <td class="no">تقارير أساسية</td>
+              <td class="yes">نبضة نمو يومية</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="modules">
+      <h2>وحدات <span>النظام</span></h2>
+      <div class="grid">
+        <div class="card">
+          <h3>التشغيل اليومي</h3>
+          <ul>
+            <li>جدول أطباء وخدمات</li>
+            <li>طابور واستقبال</li>
+            <li>حالة الموعد: مؤكد / حضر / غاب / أُلغي</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الباقات والجلسات</h3>
+          <ul>
+            <li>باقة جلسات مسبقة الدفع</li>
+            <li>تتبع المتبقي تلقائياً</li>
+            <li>تنبيه قرب انتهاء الباقة</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>استرداد الغياب</h3>
+          <ul>
+            <li>قائمة انتظار ذكية</li>
+            <li>عرض الموعد الشاغر خلال دقائق</li>
+            <li>تقليل الكرسي الفاضي</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>مكتب واتساب</h3>
+          <ul>
+            <li>قوالب حجز وتأكيد ومتابعة</li>
+            <li>حالات المحادثة</li>
+            <li>سجل واضح للفريق</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>الدفع المحلي</h3>
+          <ul>
+            <li>عربون فودافون كاش</li>
+            <li>إنستاباي / تحويل</li>
+            <li>تفعيل بعد التحقق</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>قيادة المالك</h3>
+          <ul>
+            <li>إيراد اليوم والأسبوع</li>
+            <li>نسبة الحضور والغياب</li>
+            <li>باقات تحتاج تجديد</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <h2>باقات <span>واضحة</span></h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Starter</h3>
+          <div class="price">١٬٤٩٩ ج.م <small>/ شهرياً</small></div>
+          <ul>
+            <li>عيادة واحدة</li>
+            <li>مواعيد + رابط حجز</li>
+            <li>قوالب واتساب</li>
+            <li>دعم أساسي</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="pill">الأكثر طلباً</span>
+          <h3>Growth</h3>
+          <div class="price">٢٬٩٩٩ ج.م <small>/ شهرياً</small></div>
+          <ul>
+            <li>كل Starter</li>
+            <li>استرداد الغياب</li>
+            <li>باقات الجلسات</li>
+            <li>مركز قيادة المالك</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Command</h3>
+          <div class="price">٤٬٩٩٩ ج.م <small>/ شهرياً</small></div>
+          <ul>
+            <li>فروع متعددة</li>
+            <li>أوضاع تخصص متقدمة</li>
+            <li>مرافقة تشغيل</li>
+            <li>أولوية دعم</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:.8rem;font-size:.9rem">
+        الدفع حالياً يدوي عبر فودافون كاش <strong style="color:var(--gold)">+201032476258</strong> — التفعيل بعد التحقق من التحويل.
+      </p>
+    </section>
+
+    <section class="section" id="start">
+      <div class="cta-box">
+        <h3>احجز عرضاً أو اشتراكاً</h3>
+        <p class="muted" style="margin-bottom:.8rem">
+          اكتب اسم العيادة والتخصص على واتساب، ونجهّز لك عرضاً سريعاً أو نفعّل الاشتراك بعد الدفع.
+        </p>
+        <div class="actions">
+          <a class="btn btn-gold" href="https://wa.me/201032476258?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%B9%D8%B1%D8%B6%20HABIB%20CLINIC%20GROWTH" target="_blank" rel="noopener">واتساب الآن</a>
+          <a class="btn btn-line" href="mailto:AHMEDHABIB.DIGITALSOLUTIONS@GMAIL.COM">راسلنا بالإيميل</a>
+        </div>
+        <p class="muted" style="margin-top:.7rem;font-size:.88rem">
+          فودافون كاش: +201032476258<br />
+          البريد: AHMEDHABIB.DIGITALSOLUTIONS@GMAIL.COM
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <div>HABIB DIGITAL SOLUTIONS — From Ideas to Digital Reality.</div>
+      <div style="margin-top:.35rem">HABIB CLINIC GROWTH SYSTEM © 2026 · جميع الحقوق محفوظة للمنصة والعلامة والوحدات المميزة.</div>
+      <div style="margin-top:.35rem;font-size:.8rem">
+        الاستخدام والعلامة والواجهات والوحدات الخاصة خاضعة لشروط الخدمة وترخيص الاشتراك.
+        لا يمنح الاشتراك حقاً في إعادة بيع النظام أو نسخ وحداته المميزة كمنتج منافس.
+      </div>
+    </footer>
+  </main>
 </body>
 </html>
-"""
 
-# تحديد مسار الحفظ (في مساحة التخزين الداخلية أو مجلد التطبيق الافتراضي)
-file_name = "index.html"
-
-try:
-    with open(file_name, "w", encoding="utf-8") as file:
-        file.write(html_content)
-    
-    current_path = os.path.abspath(file_name)
-    print("--------------------------------------------------")
-    print("✅ تم إنشاء ملف الـ HTML بنجاح!")
-    print(f"📁 مسار الملف على هاتفك: {current_path}")
-    print("--------------------------------------------------")
-    print("الخطوة التالية: ارفع هذا الملف إلى GitHub ثم اربطه بـ Vercel كما اتفقنا.")
-    
-except Exception as e:
-    print(f"❌ حدث خطأ أثناء الحفظ: {e}")
